@@ -165,7 +165,8 @@ class UpdatesDevLauncherController(
       EASClientID(context).uuid.toString(),
       updatesConfiguration!!,
       logger,
-      databaseHolder.database
+      databaseHolder.database,
+      context
     )
     val loader = RemoteLoader(
       context,

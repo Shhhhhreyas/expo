@@ -68,7 +68,8 @@ class EnabledUpdatesController(
       EASClientID(context).uuid.toString(),
       updatesConfiguration,
       logger,
-      databaseHolder.database
+      databaseHolder.database,
+      context
     )
   private val databaseHolder = DatabaseHolder(UpdatesDatabase.getInstance(context, Dispatchers.IO))
   private val startupFinishedDeferred = CompletableDeferred<Unit>()

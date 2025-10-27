@@ -1,5 +1,6 @@
 package expo.modules.updates.loader
 
+import android.content.Context
 import androidx.annotation.VisibleForTesting
 import expo.modules.jsonutils.require
 import expo.modules.structuredheaders.Dictionary
@@ -65,7 +66,8 @@ class FileDownloader(
   private val easClientID: String,
   private val configuration: UpdatesConfiguration,
   private val logger: UpdatesLogger,
-  private val database: UpdatesDatabase
+  private val database: UpdatesDatabase,
+  private val context: Context
 ) {
   // If the configured launch wait milliseconds is greater than the okhttp default (10_000)
   // we should use that as the timeout. For example, let's say launchWaitMs is 20 seconds,
@@ -86,8 +88,9 @@ class FileDownloader(
     configuration: UpdatesConfiguration,
     logger: UpdatesLogger,
     database: UpdatesDatabase,
+    context: Context,
     client: OkHttpClient
-  ) : this(filesDirectory, easClientID, configuration, logger, database) {
+  ) : this(filesDirectory, easClientID, configuration, logger, database, context) {
     this.client = client
   }
 
@@ -277,7 +280,7 @@ class FileDownloader(
   private fun preparePatchBaseAsset(
     asset: AssetEntity,
     updatesDirectory: File,
-    launchedUpdate: UpdateEntity
+    launchedUpdate: UpdateEntity,
   ): LaunchAssetContext {
     if (!asset.isLaunchAsset) {
       throw IOException("Received patch for non-launch asset ${asset.key}")
@@ -291,7 +294,19 @@ class FileDownloader(
     val launchAssetRelativePath = launchAssetEntity.relativePath
       ?: throw IOException("Launch asset for update $currentUpdateId is missing a relative path")
 
-    val baseFile = File(updatesDirectory, launchAssetRelativePath)
+    val baseFile = if (launchAssetRelativePath.startsWith("file:///android_asset/")) {
+            // Asset is bundled inside APK
+            val assetPath = launchAssetRelativePath.removePrefix("file:///android_asset/").replace(".js", "")
+            val assetManager = context.assets
+            val tempFile = File.createTempFile("base_asset", ".bundle", context.cacheDir)
+            assetManager.open(assetPath).use { input ->
+                tempFile.outputStream().use { output -> input.copyTo(output) }
+              }
+            tempFile
+          } else {
+            // Regular file in updates directory
+            File(updatesDirectory, launchAssetRelativePath)
+          }
     if (!baseFile.exists()) {
       throw IOException("Base asset $baseFile is missing; cannot apply patch")
     }

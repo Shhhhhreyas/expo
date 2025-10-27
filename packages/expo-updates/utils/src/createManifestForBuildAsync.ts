@@ -1,11 +1,11 @@
 import type { HashedAssetData } from '@expo/metro-config/build/transform-worker/getAssets';
 import crypto from 'crypto';
-import { convertEntryPointToRelative, resolveRelativeEntryPoint } from 'expo/config/paths';
+import { convertEntryPointToRelative, resolveRelativeEntryPoint } from '@expo/config/paths';
 import {
-  drawableFileTypes,
   createMetroServerAndBundleRequestAsync,
   exportEmbedAssetsAsync,
-} from 'expo/internal/unstable-expo-updates-cli-exports';
+} from '@expo/cli/src/export/embed/exportEmbedAsync';
+import { drawableFileTypes } from '@expo/cli/src/export/metroAssetLocalPath';
 import type { EmbeddedManifest } from 'expo-manifests';
 import fs from 'fs';
 import path from 'path';
