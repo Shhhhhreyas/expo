@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createManifestForBuildAsync = createManifestForBuildAsync;
 const crypto_1 = __importDefault(require("crypto"));
 const paths_1 = require("@expo/config/paths");
-const unstable_expo_updates_cli_exports_1 = require("@expo/cli/build/src/export/embed/exportEmbedAsync");
+const exportEmbedAsync_1 = require("@expo/cli/build/src/export/embed/exportEmbedAsync");
 const metroAssetLocalPath_1 = require("@expo/cli/build/src/export/metroAssetLocalPath");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -29,10 +29,10 @@ async function createManifestForBuildAsync(platform, projectRoot, destinationDir
         sourcemapUseAbsolutePath: false,
         resetCache: false,
     };
-    const { server, bundleRequest } = await (0, unstable_expo_updates_cli_exports_1.createMetroServerAndBundleRequestAsync)(projectRoot, options);
+    const { server, bundleRequest } = await (0, exportEmbedAsync_1.createMetroServerAndBundleRequestAsync)(projectRoot, options);
     let assets;
     try {
-        assets = await (0, unstable_expo_updates_cli_exports_1.exportEmbedAssetsAsync)(server, bundleRequest, projectRoot, options);
+        assets = await (0, exportEmbedAsync_1.exportEmbedAssetsAsync)(server, bundleRequest, projectRoot, options);
     }
     catch (e) {
         throw new Error("Error loading assets JSON from Metro. Ensure you've followed all expo-updates installation steps correctly. " +
