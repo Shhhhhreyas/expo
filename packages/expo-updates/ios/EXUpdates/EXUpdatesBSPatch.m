@@ -2,7 +2,7 @@
 
 #include "EXUpdatesBSPatch.h"
 
-extern int bspatch_main(int argc, char *argv[]);
+extern int bspatch_main(int argc, char * ofpath, char * nfpath, char * pfpath );
 
 int EXUpdatesApplyBSDiffPatch(const char *oldFilePath,
                               const char *newFilePath,
@@ -14,5 +14,5 @@ int EXUpdatesApplyBSDiffPatch(const char *oldFilePath,
     patchFilePath,
   };
 
-  return bspatch_main(4, (char **)argvConst);
+  return bspatch_main(4, (char *)oldFilePath, (char *)newFilePath, (char *)patchFilePath);
 }
